@@ -1,0 +1,372 @@
+classDiagram
+direction LR
+
+namespace VIEW {
+    class LandingPage
+    class LoginPage
+    class RegisterParticipantPage
+    class ForgotPassword
+    class ResetPassword
+    class AdminDashboardPage
+    class AdminProfilePage
+    class ParticipantProfilePage
+    class InstructorProfilePage
+    class ManageParticipantsPage
+    class ManageInstructorsPage
+    class ManageVehiclesPage
+    class ManagePackagesPage
+    class ManageTimeSlotsPage
+    class InstructorSlotAssignmentsView
+}
+
+namespace CONTROLLER {
+    class AuthController {
+        +register()
+        +login()
+        +forgotPassword()
+        +resetPassword()
+        +me()
+        +logout()
+    }
+
+    class ProfilController {
+        +show()
+        +update()
+        +uploadFotoProfil()
+        +hapusFotoProfil()
+    }
+
+    class DashboardAdminController {
+        +index()
+    }
+
+    class PesertaController {
+        +index()
+        +store()
+        +update()
+        +destroy()
+        +activate()
+    }
+
+    class InstrukturController {
+        +index()
+        +store()
+        +update()
+        +destroy()
+        +activate()
+    }
+
+    class KendaraanController {
+        +index()
+        +store()
+        +update()
+        +destroy()
+        +activate()
+    }
+
+    class PaketKursusController {
+        +index()
+        +store()
+        +update()
+        +destroy()
+        +activate()
+    }
+
+    class SlotWaktuController {
+        +index()
+        +store()
+        +update()
+        +destroy()
+        +activate()
+    }
+
+    class InstructorSlotAssignmentController {
+        +index()
+        +matrix()
+        +store()
+        +destroy()
+    }
+
+    class PaketKursusPublikController {
+        +index()
+    }
+}
+
+namespace SERVICE {
+    class PasswordRule {
+        +strong()
+        +messages()
+    }
+
+    class DateFormatter {
+        +date()
+        +dateTime()
+        +time()
+    }
+
+    class CourseProgressManager {
+        +totalSessionsFor()
+        +isCompleted()
+        +hasUnfinishedDifferentActivePackage()
+        +syncCertificateStatus()
+    }
+}
+
+namespace ENTITY {
+    class Role {
+        +id
+        +nama_role
+        +slug
+        +deskripsi
+    }
+
+    class User {
+        +id
+        +role_id
+        +name
+        +email
+        +password
+        +no_telepon
+        +alamat
+        +status_akun
+        +foto_profil_path
+        +last_login_at
+    }
+
+    class Participant {
+        +id
+        +user_id
+        +kode_peserta
+        +paket_aktif_id
+        +tanggal_lahir
+        +gender
+        +tanggal_bergabung
+        +jumlah_sesi_selesai
+        +jumlah_sesi_total
+        +jumlah_absen
+        +rating_rata_rata
+        +status_sertifikat
+    }
+
+    class Instructor {
+        +id
+        +user_id
+        +kode_instruktur
+        +jabatan
+        +spesialisasi
+        +status
+        +status_jadwal
+        +tanggal_bergabung
+        +rating
+        +total_sesi
+        +tingkat_kelulusan
+    }
+
+    class Vehicle {
+        +id
+        +kode_kendaraan
+        +nama_kendaraan
+        +model
+        +nomor_plat
+        +transmisi
+        +status
+        +ketersediaan
+        +digunakan_hari_ini
+        +kilometer_servis_terakhir
+        +status_asuransi
+        +status_stnk
+        +catatan
+        +foto_kendaraan
+    }
+
+    class CoursePackage {
+        +id
+        +kode_paket
+        +nama_paket
+        +durasi_jam
+        +deskripsi
+        +harga_antar_jemput
+        +harga_tidak_antar_jemput
+        +harga_dengan_sim_antar_jemput
+        +harga_dengan_sim_tidak_antar_jemput
+        +termasuk_sertifikat
+        +fasilitas
+        +status
+    }
+
+    class TimeSlot {
+        +id
+        +kode_slot
+        +nama_slot
+        +subtitle
+        +jam_mulai
+        +jam_selesai
+        +durasi_menit
+        +status
+        +hari_aktif
+        +catatan
+    }
+
+    class InstructorTimeSlotAssignment {
+        +id
+        +instructor_id
+        +time_slot_id
+        +day_of_week
+        +status
+        +catatan
+    }
+
+    class TrainingSchedule {
+        +id
+        +kode_jadwal
+        +tanggal_latihan
+        +time_slot_id
+        +instructor_id
+        +vehicle_id
+        +course_package_id
+        +kapasitas
+        +jumlah_booking
+        +status
+    }
+
+    class Booking {
+        +id
+        +kode_booking
+        +booking_group_id
+        +participant_id
+        +training_schedule_id
+        +course_package_id
+        +status
+    }
+
+    class BookingPayment {
+        +id
+        +booking_id
+        +booking_group_id
+        +nominal_bayar
+        +status
+        +tanggal_upload
+        +tanggal_verifikasi
+    }
+
+    class TrainingResult {
+        +id
+        +booking_id
+        +participant_id
+        +training_schedule_id
+        +instructor_id
+        +status_kelulusan
+        +validated_at
+    }
+
+    class Certificate {
+        +id
+        +nomor_sertifikat
+        +kode_verifikasi
+        +peserta_id
+        +paket_id
+        +status
+    }
+
+    class PersonalAccessToken {
+        +id
+        +tokenable_type
+        +tokenable_id
+        +name
+        +token
+        +abilities
+        +last_used_at
+        +expires_at
+    }
+
+    class PasswordResetToken {
+        +email
+        +token
+        +created_at
+    }
+}
+
+LandingPage --> PaketKursusPublikController
+LoginPage --> AuthController
+RegisterParticipantPage --> AuthController
+ForgotPassword --> AuthController
+ResetPassword --> AuthController
+AdminDashboardPage --> DashboardAdminController
+AdminProfilePage --> ProfilController
+ParticipantProfilePage --> ProfilController
+InstructorProfilePage --> ProfilController
+ManageParticipantsPage --> PesertaController
+ManageInstructorsPage --> InstrukturController
+ManageVehiclesPage --> KendaraanController
+ManagePackagesPage --> PaketKursusController
+ManageTimeSlotsPage --> SlotWaktuController
+ManageTimeSlotsPage --> InstructorSlotAssignmentController
+InstructorSlotAssignmentsView --> InstructorSlotAssignmentController
+
+AuthController --> PasswordRule
+AuthController --> Role
+AuthController --> User
+AuthController --> Participant
+AuthController --> PersonalAccessToken
+AuthController --> PasswordResetToken
+ProfilController --> PasswordRule
+ProfilController --> DateFormatter
+ProfilController --> User
+ProfilController --> Participant
+ProfilController --> Instructor
+DashboardAdminController --> DateFormatter
+DashboardAdminController --> Participant
+DashboardAdminController --> Instructor
+DashboardAdminController --> Vehicle
+DashboardAdminController --> TrainingSchedule
+DashboardAdminController --> Booking
+DashboardAdminController --> BookingPayment
+DashboardAdminController --> TrainingResult
+DashboardAdminController --> Certificate
+PesertaController --> PasswordRule
+PesertaController --> CourseProgressManager
+PesertaController --> DateFormatter
+PesertaController --> User
+PesertaController --> Role
+PesertaController --> Participant
+PesertaController --> CoursePackage
+InstrukturController --> PasswordRule
+InstrukturController --> DateFormatter
+InstrukturController --> User
+InstrukturController --> Role
+InstrukturController --> Instructor
+KendaraanController --> Vehicle
+PaketKursusController --> DateFormatter
+PaketKursusController --> CoursePackage
+SlotWaktuController --> DateFormatter
+SlotWaktuController --> TimeSlot
+InstructorSlotAssignmentController --> DateFormatter
+InstructorSlotAssignmentController --> InstructorTimeSlotAssignment
+InstructorSlotAssignmentController --> Instructor
+InstructorSlotAssignmentController --> TimeSlot
+PaketKursusPublikController --> DateFormatter
+PaketKursusPublikController --> CoursePackage
+
+CourseProgressManager --> Participant
+CourseProgressManager --> CoursePackage
+CourseProgressManager --> TrainingSchedule
+CourseProgressManager --> Booking
+
+Role "1" --> "0..*" User
+User "1" --> "0..1" Participant
+User "1" --> "0..1" Instructor
+User "1" --> "0..*" PersonalAccessToken
+User "1" --> "0..*" PasswordResetToken
+CoursePackage "1" --> "0..*" Participant
+Instructor "1" --> "0..*" InstructorTimeSlotAssignment
+TimeSlot "1" --> "0..*" InstructorTimeSlotAssignment
+Instructor "1" --> "0..*" TrainingSchedule
+Vehicle "1" --> "0..*" TrainingSchedule
+TimeSlot "1" --> "0..*" TrainingSchedule
+CoursePackage "1" --> "0..*" TrainingSchedule
+Participant "1" --> "0..*" Booking
+TrainingSchedule "1" --> "0..*" Booking
+Booking "1" --> "0..1" BookingPayment
+Booking "1" --> "0..1" TrainingResult
+Participant "1" --> "0..*" Certificate
+CoursePackage "1" --> "0..*" Certificate

@@ -1,0 +1,485 @@
+classDiagram
+direction LR
+
+namespace VIEW {
+    class AvailableSchedulePage
+    class SelectPackageView
+    class BookingPackageConfirmationPage
+    class PaymentProofUploadModal
+    class MySchedulePage
+    class PackageScheduleDetailModal
+    class RescheduleSessionModal
+    class ReschedulePackageSessionsModal
+    class CancelSessionModal
+    class CancelPackageModal
+    class BookingHistoryPage
+    class BookingHistoryDetailModal
+    class AdminBookingsPage
+    class AdminBookingDetailModal
+    class AdminBookingPaymentActionModal
+    class AdminBookingRescheduleModal
+    class AdminBookingCancelModal
+    class AdminBookingRefundActionModal
+}
+
+namespace CONTROLLER {
+    class PaketKursusPublikController {
+        +index()
+    }
+
+    class TimeSlotPesertaController {
+        +__invoke()
+    }
+
+    class BookingPackagePreviewController {
+        +__invoke()
+    }
+
+    class BookingPackageStoreController {
+        +__invoke()
+    }
+
+    class BookingGroupPesertaController {
+        +index()
+        +riwayatPaket()
+        +batalPaket()
+    }
+
+    class BookingPesertaController {
+        +show()
+        +uploadBuktiBayar()
+        +previewSesiPaket()
+        +rekomendasiJadwal()
+        +ubahJadwal()
+        +batal()
+    }
+
+    class BookingGroupAdminController {
+        +index()
+        +show()
+        +konfirmasiPembayaran()
+        +tolakPembayaran()
+        +buktiBayar()
+    }
+
+    class BookingAdminController {
+        +ubahJadwal()
+        +batal()
+    }
+
+    class JadwalLatihanController {
+        +index()
+    }
+
+    class BookingRefundController {
+        +index()
+        +proses()
+        +selesaikan()
+        +tolak()
+    }
+}
+
+namespace SERVICE {
+    class BookingPackagePlannerService {
+        +preview()
+        +previewFixedResourceSession()
+    }
+
+    class BookingPackageCreationService {
+        +create()
+        +formatBookingGroup()
+    }
+
+    class BookingWhatsAppNotificationService {
+        +notifyBookingCreated()
+        +notifyPaymentConfirmed()
+        +notifyPaymentRejected()
+        +notifyPackageCancelled()
+        +notifyPackageAutoCancelledPaymentTimeout()
+        +notifyRefundFinished()
+    }
+
+    class FonnteWhatsAppService {
+        +sendMessage()
+    }
+
+    class BookingCapacityManager {
+        +occupiesCapacity()
+        +hasCapacity()
+        +reserve()
+        +release()
+        +syncStatus()
+        +syncFromBookings()
+    }
+
+    class BookingPaymentProofResponder {
+        +response()
+    }
+
+    class CourseProgressManager {
+        +totalSessionsFor()
+        +isCompleted()
+        +startOrSyncActivePackage()
+        +incrementCompletedSession()
+        +applyCompletedSessionDelta()
+        +participantHasOtherActiveBookingPackage()
+    }
+
+    class DateFormatter {
+        +date()
+        +dateTime()
+        +time()
+    }
+
+    class CancelExpiredUnpaidBookingPackagesCommand {
+        +handle()
+    }
+}
+
+namespace ENTITY {
+    class User {
+        +id
+        +role_id
+        +name
+        +email
+        +no_telepon
+        +status_akun
+    }
+
+    class Participant {
+        +id
+        +user_id
+        +kode_peserta
+        +paket_aktif_id
+        +jumlah_sesi_selesai
+        +jumlah_sesi_total
+        +status_sertifikat
+    }
+
+    class Instructor {
+        +id
+        +user_id
+        +kode_instruktur
+        +status
+        +status_jadwal
+    }
+
+    class Vehicle {
+        +id
+        +kode_kendaraan
+        +nama_kendaraan
+        +model
+        +nomor_plat
+        +transmisi
+        +status
+        +ketersediaan
+    }
+
+    class CoursePackage {
+        +id
+        +kode_paket
+        +nama_paket
+        +durasi_jam
+        +harga_antar_jemput
+        +harga_tidak_antar_jemput
+        +harga_dengan_sim_antar_jemput
+        +harga_dengan_sim_tidak_antar_jemput
+        +termasuk_sertifikat
+        +status
+    }
+
+    class TimeSlot {
+        +id
+        +kode_slot
+        +nama_slot
+        +jam_mulai
+        +jam_selesai
+        +durasi_menit
+        +status
+    }
+
+    class InstructorTimeSlotAssignment {
+        +id
+        +instructor_id
+        +time_slot_id
+        +day_of_week
+        +status
+    }
+
+    class TrainingSchedule {
+        +id
+        +kode_jadwal
+        +tanggal_latihan
+        +time_slot_id
+        +instructor_id
+        +vehicle_id
+        +course_package_id
+        +kapasitas
+        +jumlah_booking
+        +status
+    }
+
+    class BookingGroup {
+        +id
+        +kode_group
+        +participant_id
+        +course_package_id
+        +instructor_id
+        +vehicle_id
+        +total_sesi
+        +jumlah_sesi_selesai
+        +status
+        +pakai_antar_jemput
+        +pakai_sim
+        +alamat_jemput
+        +harga_paket
+        +tanggal_booking
+        +tanggal_dikonfirmasi
+        +tanggal_dibatalkan
+        +alasan_pembatalan
+    }
+
+    class Booking {
+        +id
+        +kode_booking
+        +booking_group_id
+        +participant_id
+        +training_schedule_id
+        +course_package_id
+        +sesi_ke
+        +total_sesi
+        +pakai_antar_jemput
+        +pakai_sim
+        +harga_paket
+        +status
+        +tanggal_booking
+        +tanggal_dikonfirmasi
+        +tanggal_dibatalkan
+    }
+
+    class BookingPayment {
+        +id
+        +booking_id
+        +booking_group_id
+        +nominal_bayar
+        +bukti_bayar_path
+        +bukti_bayar_original_name
+        +bukti_bayar_mime
+        +nama_pengirim
+        +bank_pengirim
+        +tanggal_upload
+        +tanggal_verifikasi
+        +status
+        +catatan_peserta
+        +catatan_admin
+        +alasan_penolakan
+        +verified_by
+    }
+
+    class BookingRefund {
+        +id
+        +booking_group_id
+        +booking_payment_id
+        +requested_by
+        +processed_by
+        +nominal_refund
+        +tipe_refund
+        +status_refund
+        +bank_tujuan
+        +nomor_rekening
+        +nama_penerima
+        +alasan_refund
+        +catatan_peserta
+        +catatan_admin
+        +tanggal_pengajuan
+        +tanggal_diproses
+        +tanggal_refund
+    }
+
+    class BookingHistory {
+        +id
+        +booking_id
+        +old_training_schedule_id
+        +new_training_schedule_id
+        +aksi
+        +status_sebelum
+        +status_sesudah
+        +catatan
+        +changed_by
+    }
+
+    class TrainingResult {
+        +id
+        +booking_id
+        +participant_id
+        +training_schedule_id
+        +instructor_id
+        +status_kehadiran
+        +status_kelulusan
+    }
+
+    class Certificate {
+        +id
+        +hasil_latihan_id
+        +peserta_id
+        +paket_id
+        +status
+    }
+
+    class WhatsAppNotificationLog {
+        +id
+        +notification_key
+        +event_type
+        +notifiable_type
+        +notifiable_id
+        +target
+        +status
+        +sent_at
+    }
+}
+
+SelectPackageView --> PaketKursusPublikController
+AvailableSchedulePage --> PaketKursusPublikController
+AvailableSchedulePage --> TimeSlotPesertaController
+AvailableSchedulePage --> BookingPackagePreviewController
+AvailableSchedulePage --> BookingPesertaController
+BookingPackageConfirmationPage --> BookingPackagePreviewController
+BookingPackageConfirmationPage --> BookingPackageStoreController
+PaymentProofUploadModal --> BookingPesertaController
+MySchedulePage --> BookingGroupPesertaController
+MySchedulePage --> BookingPesertaController
+PackageScheduleDetailModal --> BookingPesertaController
+RescheduleSessionModal --> BookingPesertaController
+ReschedulePackageSessionsModal --> BookingPesertaController
+CancelSessionModal --> BookingPesertaController
+CancelPackageModal --> BookingGroupPesertaController
+BookingHistoryPage --> BookingGroupPesertaController
+BookingHistoryDetailModal --> BookingPesertaController
+AdminBookingsPage --> BookingGroupAdminController
+AdminBookingsPage --> BookingAdminController
+AdminBookingsPage --> JadwalLatihanController
+AdminBookingsPage --> BookingRefundController
+AdminBookingDetailModal --> BookingGroupAdminController
+AdminBookingPaymentActionModal --> BookingGroupAdminController
+AdminBookingPaymentActionModal --> BookingRefundController
+AdminBookingRescheduleModal --> BookingAdminController
+AdminBookingRescheduleModal --> JadwalLatihanController
+AdminBookingCancelModal --> BookingAdminController
+AdminBookingRefundActionModal --> BookingRefundController
+
+PaketKursusPublikController --> DateFormatter
+PaketKursusPublikController --> CoursePackage
+TimeSlotPesertaController --> DateFormatter
+TimeSlotPesertaController --> TimeSlot
+BookingPackagePreviewController --> BookingPackagePlannerService
+BookingPackagePreviewController --> Participant
+BookingPackagePreviewController --> CoursePackage
+BookingPackagePreviewController --> Booking
+BookingPackageStoreController --> BookingPackageCreationService
+BookingPackageStoreController --> BookingWhatsAppNotificationService
+BookingPackageStoreController --> Participant
+BookingGroupPesertaController --> BookingWhatsAppNotificationService
+BookingGroupPesertaController --> BookingCapacityManager
+BookingGroupPesertaController --> DateFormatter
+BookingGroupPesertaController --> BookingGroup
+BookingGroupPesertaController --> Booking
+BookingGroupPesertaController --> BookingPayment
+BookingGroupPesertaController --> BookingRefund
+BookingGroupPesertaController --> BookingHistory
+BookingGroupPesertaController --> Certificate
+BookingPesertaController --> BookingPackagePlannerService
+BookingPesertaController --> BookingPaymentProofResponder
+BookingPesertaController --> BookingCapacityManager
+BookingPesertaController --> CourseProgressManager
+BookingPesertaController --> DateFormatter
+BookingPesertaController --> Booking
+BookingPesertaController --> BookingGroup
+BookingPesertaController --> BookingPayment
+BookingPesertaController --> BookingHistory
+BookingPesertaController --> Participant
+BookingPesertaController --> TrainingSchedule
+BookingPesertaController --> CoursePackage
+BookingGroupAdminController --> BookingWhatsAppNotificationService
+BookingGroupAdminController --> BookingCapacityManager
+BookingGroupAdminController --> BookingPaymentProofResponder
+BookingGroupAdminController --> DateFormatter
+BookingGroupAdminController --> BookingGroup
+BookingGroupAdminController --> Booking
+BookingGroupAdminController --> BookingPayment
+BookingGroupAdminController --> BookingHistory
+BookingAdminController --> BookingCapacityManager
+BookingAdminController --> DateFormatter
+BookingAdminController --> Booking
+BookingAdminController --> BookingHistory
+BookingAdminController --> TrainingSchedule
+JadwalLatihanController --> DateFormatter
+JadwalLatihanController --> TrainingSchedule
+JadwalLatihanController --> TimeSlot
+JadwalLatihanController --> Instructor
+JadwalLatihanController --> Vehicle
+JadwalLatihanController --> CoursePackage
+BookingRefundController --> BookingWhatsAppNotificationService
+BookingRefundController --> DateFormatter
+BookingRefundController --> BookingRefund
+
+BookingPackagePlannerService --> CoursePackage
+BookingPackagePlannerService --> TimeSlot
+BookingPackagePlannerService --> InstructorTimeSlotAssignment
+BookingPackagePlannerService --> TrainingSchedule
+BookingPackagePlannerService --> Instructor
+BookingPackagePlannerService --> Vehicle
+BookingPackageCreationService --> BookingCapacityManager
+BookingPackageCreationService --> CourseProgressManager
+BookingPackageCreationService --> DateFormatter
+BookingPackageCreationService --> BookingGroup
+BookingPackageCreationService --> Booking
+BookingPackageCreationService --> BookingPayment
+BookingPackageCreationService --> BookingHistory
+BookingPackageCreationService --> Participant
+BookingPackageCreationService --> CoursePackage
+BookingPackageCreationService --> TrainingSchedule
+BookingWhatsAppNotificationService --> FonnteWhatsAppService
+BookingWhatsAppNotificationService --> WhatsAppNotificationLog
+BookingWhatsAppNotificationService --> BookingGroup
+BookingWhatsAppNotificationService --> BookingRefund
+BookingPaymentProofResponder --> BookingPayment
+BookingCapacityManager --> TrainingSchedule
+CourseProgressManager --> Participant
+CourseProgressManager --> CoursePackage
+CourseProgressManager --> TrainingSchedule
+CourseProgressManager --> Booking
+CancelExpiredUnpaidBookingPackagesCommand --> BookingWhatsAppNotificationService
+CancelExpiredUnpaidBookingPackagesCommand --> BookingCapacityManager
+CancelExpiredUnpaidBookingPackagesCommand --> BookingGroup
+CancelExpiredUnpaidBookingPackagesCommand --> Booking
+CancelExpiredUnpaidBookingPackagesCommand --> BookingPayment
+CancelExpiredUnpaidBookingPackagesCommand --> BookingHistory
+
+User "1" --> "0..1" Participant
+User "1" --> "0..1" Instructor
+User "1" --> "0..*" BookingPayment
+User "1" --> "0..*" BookingHistory
+User "1" --> "0..*" BookingRefund
+Participant "1" --> "0..*" BookingGroup
+Participant "1" --> "0..*" Booking
+Participant "1" --> "0..*" Certificate
+Instructor "1" --> "0..*" InstructorTimeSlotAssignment
+TimeSlot "1" --> "0..*" InstructorTimeSlotAssignment
+Instructor "1" --> "0..*" TrainingSchedule
+Vehicle "1" --> "0..*" TrainingSchedule
+TimeSlot "1" --> "0..*" TrainingSchedule
+CoursePackage "1" --> "0..*" TrainingSchedule
+CoursePackage "1" --> "0..*" BookingGroup
+CoursePackage "1" --> "0..*" Booking
+TrainingSchedule "1" --> "0..*" Booking
+TrainingSchedule "1" --> "0..*" TrainingResult
+BookingGroup "1" --> "1..*" Booking
+BookingGroup "1" --> "0..1" BookingPayment
+BookingGroup "1" --> "0..1" BookingRefund
+Booking "1" --> "0..1" BookingPayment
+Booking "1" --> "0..*" BookingHistory
+Booking "1" --> "0..1" TrainingResult
+BookingPayment "1" --> "0..*" BookingRefund
+TrainingResult "1" --> "0..1" Certificate
+WhatsAppNotificationLog ..> BookingGroup
+WhatsAppNotificationLog ..> BookingRefund

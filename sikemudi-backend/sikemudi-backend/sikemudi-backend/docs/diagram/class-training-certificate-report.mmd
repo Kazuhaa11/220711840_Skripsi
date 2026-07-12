@@ -1,0 +1,482 @@
+classDiagram
+direction LR
+
+namespace VIEW {
+    class ParticipantDashboardPage
+    class InstructorDashboardPage
+    class TeachingSchedulePage
+    class TeachingSchedulePackageDetailPage
+    class SessionListPage
+    class TrainingResultPage
+    class TrainingResultPackageDetailPage
+    class InputTrainingResultPage
+    class TrainingResultsPage
+    class VerifyTrainingResultModal
+    class ManageCertificatesPage
+    class IssueCertificateModal
+    class CertificateTemplateSettingsSection
+    class DigitalCertificatePage
+    class CertificateDetailModal
+    class CertificateVerificationPage
+    class OperationalReportsPage
+}
+
+namespace CONTROLLER {
+    class DashboardPesertaController {
+        +index()
+    }
+
+    class DashboardInstrukturController {
+        +index()
+    }
+
+    class SlotAssignmentController {
+        +index()
+    }
+
+    class JadwalMengajarController {
+        +index()
+        +show()
+        +showPackage()
+    }
+
+    class HasilLatihanController {
+        +kandidat()
+        +index()
+        +store()
+        +show()
+        +update()
+    }
+
+    class HasilLatihanAdminController {
+        +index()
+        +show()
+        +validasiKelulusan()
+    }
+
+    class SertifikatController {
+        +kandidat()
+        +index()
+        +terbitkan()
+        +show()
+        +generatePdf()
+        +download()
+    }
+
+    class CertificateTemplateController {
+        +index()
+        +store()
+        +update()
+        +destroy()
+        +setDefault()
+    }
+
+    class SertifikatPesertaController {
+        +index()
+        +show()
+        +download()
+    }
+
+    class SertifikatPublikController {
+        +verifikasi()
+    }
+
+    class OperationalReportController {
+        +filterOptions()
+        +pendapatanKursus()
+        +bookingPaket()
+        +pemakaianKendaraan()
+        +jadwalInstruktur()
+        +progresPeserta()
+        +hasilLatihan()
+    }
+}
+
+namespace SERVICE {
+    class CertificatePdfService {
+        +generateAndStore()
+        +relations()
+    }
+
+    class CertificateQrCodeService {
+        +generateAndStore()
+        +getPublicUrl()
+    }
+
+    class BookingWhatsAppNotificationService {
+        +notifyCertificatePublished()
+        +notifyBookingH1Reminder()
+        +bookingH1ReminderMessage()
+    }
+
+    class FonnteWhatsAppService {
+        +isEnabled()
+        +isConfigured()
+        +sendMessage()
+    }
+
+    class TrainingResultEligibility {
+        +resolve()
+    }
+
+    class BookingCapacityManager {
+        +syncStatus()
+        +syncFromBookings()
+        +release()
+    }
+
+    class CourseProgressManager {
+        +incrementCompletedSession()
+        +applyCompletedSessionDelta()
+        +syncCertificateStatus()
+        +hasActiveCertificateForPackage()
+    }
+
+    class DateFormatter {
+        +date()
+        +dateTime()
+        +time()
+    }
+
+    class SendBookingH1WhatsAppReminderCommand {
+        +handle()
+    }
+}
+
+namespace ENTITY {
+    class User {
+        +id
+        +role_id
+        +name
+        +email
+        +no_telepon
+        +alamat
+        +status_akun
+    }
+
+    class Participant {
+        +id
+        +user_id
+        +kode_peserta
+        +paket_aktif_id
+        +jumlah_sesi_selesai
+        +jumlah_sesi_total
+        +jumlah_absen
+        +rating_rata_rata
+        +status_sertifikat
+    }
+
+    class Instructor {
+        +id
+        +user_id
+        +kode_instruktur
+        +jabatan
+        +spesialisasi
+        +status
+        +status_jadwal
+        +rating
+        +total_sesi
+        +tingkat_kelulusan
+    }
+
+    class CoursePackage {
+        +id
+        +kode_paket
+        +nama_paket
+        +durasi_jam
+        +termasuk_sertifikat
+        +status
+    }
+
+    class Vehicle {
+        +id
+        +kode_kendaraan
+        +nama_kendaraan
+        +model
+        +nomor_plat
+        +transmisi
+        +status
+        +ketersediaan
+    }
+
+    class TimeSlot {
+        +id
+        +kode_slot
+        +nama_slot
+        +jam_mulai
+        +jam_selesai
+        +durasi_menit
+        +status
+    }
+
+    class InstructorTimeSlotAssignment {
+        +id
+        +instructor_id
+        +time_slot_id
+        +day_of_week
+        +status
+    }
+
+    class TrainingSchedule {
+        +id
+        +kode_jadwal
+        +tanggal_latihan
+        +time_slot_id
+        +instructor_id
+        +vehicle_id
+        +course_package_id
+        +kapasitas
+        +jumlah_booking
+        +status
+    }
+
+    class BookingGroup {
+        +id
+        +kode_group
+        +participant_id
+        +course_package_id
+        +instructor_id
+        +vehicle_id
+        +total_sesi
+        +jumlah_sesi_selesai
+        +status
+    }
+
+    class Booking {
+        +id
+        +kode_booking
+        +booking_group_id
+        +participant_id
+        +training_schedule_id
+        +course_package_id
+        +sesi_ke
+        +total_sesi
+        +status
+    }
+
+    class BookingPayment {
+        +id
+        +booking_id
+        +booking_group_id
+        +nominal_bayar
+        +status
+        +tanggal_upload
+        +tanggal_verifikasi
+    }
+
+    class BookingRefund {
+        +id
+        +booking_group_id
+        +booking_payment_id
+        +requested_by
+        +processed_by
+        +nominal_refund
+        +tipe_refund
+        +status_refund
+        +tanggal_pengajuan
+        +tanggal_diproses
+        +tanggal_refund
+    }
+
+    class TrainingResult {
+        +id
+        +booking_id
+        +participant_id
+        +training_schedule_id
+        +instructor_id
+        +tanggal_latihan
+        +status_kehadiran
+        +nilai_praktik
+        +nilai_sikap
+        +nilai_pemahaman
+        +nilai_akhir
+        +status_kelulusan
+        +catatan_instruktur
+        +catatan_admin
+        +validated_by
+        +validated_at
+        +created_by
+        +updated_by
+    }
+
+    class CertificateTemplate {
+        +id
+        +nama_template
+        +judul_sertifikat
+        +subjudul
+        +recipient_label
+        +program_prefix
+        +kalimat_pembuka
+        +kalimat_penutup
+        +nama_penyelenggara
+        +institution_address
+        +nama_penandatangan
+        +jabatan_penandatangan
+        +background_type
+        +background_color
+        +background_image_path
+        +border_color
+        +accent_color
+        +ttd_digital_path
+        +is_default
+        +status
+    }
+
+    class Certificate {
+        +id
+        +nomor_sertifikat
+        +kode_verifikasi
+        +hasil_latihan_id
+        +peserta_id
+        +paket_id
+        +template_id
+        +tanggal_terbit
+        +status
+        +qr_code_path
+        +verification_url
+        +pdf_path
+        +created_by
+        +updated_by
+    }
+
+    class WhatsAppNotificationLog {
+        +id
+        +notification_key
+        +event_type
+        +notifiable_type
+        +notifiable_id
+        +target
+        +message
+        +status
+        +fonnte_response
+        +error_message
+        +sent_at
+    }
+}
+
+ParticipantDashboardPage --> DashboardPesertaController
+InstructorDashboardPage --> DashboardInstrukturController
+InstructorDashboardPage --> SlotAssignmentController
+TeachingSchedulePage --> JadwalMengajarController
+TeachingSchedulePackageDetailPage --> JadwalMengajarController
+SessionListPage --> JadwalMengajarController
+TrainingResultPage --> HasilLatihanController
+TrainingResultPackageDetailPage --> HasilLatihanController
+InputTrainingResultPage --> HasilLatihanController
+TrainingResultsPage --> HasilLatihanAdminController
+VerifyTrainingResultModal --> HasilLatihanAdminController
+ManageCertificatesPage --> SertifikatController
+ManageCertificatesPage --> CertificateTemplateController
+IssueCertificateModal --> SertifikatController
+CertificateTemplateSettingsSection --> CertificateTemplateController
+DigitalCertificatePage --> SertifikatPesertaController
+CertificateDetailModal --> SertifikatPesertaController
+CertificateVerificationPage --> SertifikatPublikController
+OperationalReportsPage --> OperationalReportController
+
+DashboardPesertaController --> DateFormatter
+DashboardPesertaController --> Participant
+DashboardPesertaController --> Booking
+DashboardPesertaController --> TrainingResult
+DashboardPesertaController --> TrainingSchedule
+DashboardPesertaController --> Certificate
+DashboardInstrukturController --> DateFormatter
+DashboardInstrukturController --> Instructor
+DashboardInstrukturController --> TrainingSchedule
+DashboardInstrukturController --> Booking
+SlotAssignmentController --> DateFormatter
+SlotAssignmentController --> InstructorTimeSlotAssignment
+SlotAssignmentController --> Instructor
+SlotAssignmentController --> TimeSlot
+JadwalMengajarController --> DateFormatter
+JadwalMengajarController --> Instructor
+JadwalMengajarController --> TrainingSchedule
+JadwalMengajarController --> BookingGroup
+JadwalMengajarController --> Booking
+HasilLatihanController --> DateFormatter
+HasilLatihanController --> BookingCapacityManager
+HasilLatihanController --> CourseProgressManager
+HasilLatihanController --> TrainingResultEligibility
+HasilLatihanController --> Booking
+HasilLatihanController --> TrainingResult
+HasilLatihanController --> TrainingSchedule
+HasilLatihanController --> Participant
+HasilLatihanController --> Instructor
+HasilLatihanAdminController --> DateFormatter
+HasilLatihanAdminController --> TrainingResultEligibility
+HasilLatihanAdminController --> TrainingResult
+HasilLatihanAdminController --> Booking
+HasilLatihanAdminController --> BookingGroup
+HasilLatihanAdminController --> Participant
+SertifikatController --> DateFormatter
+SertifikatController --> TrainingResultEligibility
+SertifikatController --> BookingWhatsAppNotificationService
+SertifikatController --> CertificateQrCodeService
+SertifikatController --> CertificatePdfService
+SertifikatController --> Certificate
+SertifikatController --> CertificateTemplate
+SertifikatController --> TrainingResult
+SertifikatController --> Participant
+SertifikatController --> CoursePackage
+CertificateTemplateController --> CertificateTemplate
+SertifikatPesertaController --> Certificate
+SertifikatPublikController --> DateFormatter
+SertifikatPublikController --> CertificateQrCodeService
+SertifikatPublikController --> Certificate
+OperationalReportController --> DateFormatter
+OperationalReportController --> Booking
+OperationalReportController --> BookingGroup
+OperationalReportController --> BookingPayment
+OperationalReportController --> BookingRefund
+OperationalReportController --> TrainingResult
+OperationalReportController --> Participant
+OperationalReportController --> Instructor
+OperationalReportController --> Vehicle
+
+CertificatePdfService --> Certificate
+CertificateQrCodeService --> Certificate
+BookingWhatsAppNotificationService --> FonnteWhatsAppService
+BookingWhatsAppNotificationService --> WhatsAppNotificationLog
+BookingWhatsAppNotificationService --> Booking
+BookingWhatsAppNotificationService --> BookingGroup
+BookingWhatsAppNotificationService --> Certificate
+SendBookingH1WhatsAppReminderCommand --> BookingWhatsAppNotificationService
+SendBookingH1WhatsAppReminderCommand --> Booking
+SendBookingH1WhatsAppReminderCommand --> WhatsAppNotificationLog
+TrainingResultEligibility --> TrainingResult
+BookingCapacityManager --> TrainingSchedule
+CourseProgressManager --> Participant
+CourseProgressManager --> Booking
+CourseProgressManager --> CoursePackage
+
+User "1" --> "0..1" Participant
+User "1" --> "0..1" Instructor
+User "1" --> "0..*" BookingPayment
+User "1" --> "0..*" TrainingResult
+User "1" --> "0..*" Certificate
+Participant "1" --> "0..*" BookingGroup
+Participant "1" --> "0..*" Booking
+Participant "1" --> "0..*" TrainingResult
+Participant "1" --> "0..*" Certificate
+CoursePackage "1" --> "0..*" BookingGroup
+CoursePackage "1" --> "0..*" Booking
+CoursePackage "1" --> "0..*" TrainingSchedule
+CoursePackage "1" --> "0..*" Certificate
+Instructor "1" --> "0..*" InstructorTimeSlotAssignment
+TimeSlot "1" --> "0..*" InstructorTimeSlotAssignment
+Instructor "1" --> "0..*" TrainingSchedule
+Vehicle "1" --> "0..*" TrainingSchedule
+TimeSlot "1" --> "0..*" TrainingSchedule
+TrainingSchedule "1" --> "0..*" Booking
+TrainingSchedule "1" --> "0..*" TrainingResult
+BookingGroup "1" --> "1..*" Booking
+BookingGroup "1" --> "0..1" BookingPayment
+BookingGroup "1" --> "0..1" BookingRefund
+Booking "1" --> "0..1" BookingPayment
+Booking "1" --> "0..1" TrainingResult
+BookingPayment "1" --> "0..*" BookingRefund
+TrainingResult "1" --> "0..1" Certificate
+CertificateTemplate "1" --> "0..*" Certificate
+WhatsAppNotificationLog ..> Booking
+WhatsAppNotificationLog ..> BookingGroup
+WhatsAppNotificationLog ..> Certificate
